@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { ThemeProvider } from "@material-tailwind/react";
+import ReactQueryClientProvider from "config/ReactQueryClientProvider";
+import RecoilProvider from "config/RecoilProvider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -25,10 +28,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+          integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+          crossOrigin="anonymous"
+          referrerPolicy="no-referrer"
+        />
+      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-100 w-full h-screen mx-auto xl:max-w-4xl lg:max-w-2xl md:max-w-xl max-w-sm`}
       >
-        {children}
+        <ReactQueryClientProvider>
+          <RecoilProvider>{children}</RecoilProvider>
+        </ReactQueryClientProvider>
       </body>
     </html>
   );
