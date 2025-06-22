@@ -72,7 +72,7 @@ const QuizContainer = () => {
     if (!quizConfig || !getQuestionQuery.data) return;
     if (
       currentCount + 1 === quizConfig.count ||
-      getQuestionQuery.data.length < quizConfig.count
+      getQuestionQuery.data.length <= currentCount + 1
     ) {
       setIsEnd(true);
       return;
@@ -200,7 +200,7 @@ const QuizContainer = () => {
                 className="rounded-lg px-3 py-2 bg-yellow-500"
               >
                 {currentCount + 1 === quizConfig.count ||
-                getQuestionQuery.data.length < quizConfig.count
+                getQuestionQuery.data.length <= currentCount + 1
                   ? "종료"
                   : "다음"}
               </button>
