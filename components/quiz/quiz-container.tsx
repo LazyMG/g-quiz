@@ -18,6 +18,7 @@ const QuizContainer = () => {
   const [myCount, setMyCount] = useState(0);
   const [currentCount, setCurrentCount] = useState(0);
   const [isEnd, setIsEnd] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true);
 
   const realAnswerRef = useRef("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -48,7 +49,12 @@ const QuizContainer = () => {
     enabled: !!quizConfig,
   });
 
-  if (!quizConfig || getQuestionQuery.isLoading || !getQuestionQuery.data) {
+  if (
+    !quizConfig ||
+    getQuestionQuery.isLoading ||
+    !getQuestionQuery.data ||
+    getQuestionQuery.isFetching
+  ) {
     return (
       <div className="p-6 w-full h-2/3 flex flex-col gap-8 rounded-lg bg-blue-600">
         <div className="w-full h-full flex justify-center items-center">
@@ -71,6 +77,7 @@ const QuizContainer = () => {
       setIsEnd(true);
       return;
     }
+    setImageLoading(true);
     setIsRight(null);
     setMyAnswer("");
     realAnswerRef.current = "";
@@ -80,7 +87,7 @@ const QuizContainer = () => {
   const quizHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!quizConfig) return;
-
+    if (myAnswer === "") return;
     const check = checkAnswer(myAnswer, currentQuiz, quizConfig.key.toString());
     const answer_code = decrypt(
       currentQuiz.mode_code,
@@ -144,11 +151,17 @@ const QuizContainer = () => {
               : getQuestionQuery.data.length
           }`}</h2>
 
-          <div className="w-full h-[600px] rounded-md bg-white flex justify-center items-center py-12">
+          <div className="w-full h-[600px] rounded-md bg-white flex justify-center items-center py-12 relative">
+            {imageLoading && (
+              <div className="absolute inset-0 bg-white z-10">
+                <div className=" animate-pulse rounded-md bg-gray-200" />
+              </div>
+            )}
             <img
               className="h-full object-contain"
               src={`${currentQuiz.image_url}`}
               alt="quiz"
+              onLoad={() => setImageLoading(false)}
             />
           </div>
 
