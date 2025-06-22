@@ -30,10 +30,15 @@ export async function getQuestions(
 ) {
   const supabase = await createServerSupabaseClient();
 
-  const { data, error } = await supabase
-    .from("mobile_suits")
-    .select("*")
-    .eq("title_id", Number(titleList[0]));
+  const titleIds = titleList.map(Number);
+
+  const { data, error } = await supabase.rpc(
+    "get_random_mobile_suits_multiple",
+    {
+      title_ids: titleIds,
+      limit_count: count,
+    }
+  );
 
   if (error) {
     console.error(error.message);
@@ -44,6 +49,13 @@ export async function getQuestions(
     const encrypted = data.map((item) => ({
       ...item,
       name: encrypt(item.name, key.toString()),
+      en_name: encrypt(item.en_name, key.toString()),
+      mode_code: encrypt(item.mode_code, key.toString()),
+      aliases:
+        item.aliases?.map((alias) => ({
+          ...alias,
+          alias: encrypt(alias.alias, key.toString()),
+        })) ?? null,
     }));
     return encrypted;
   }

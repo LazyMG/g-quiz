@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useRecoilValue } from "recoil";
 import { quizConfigState } from "utils/recoil/atoms";
@@ -8,16 +8,38 @@ import { Spinner } from "@material-tailwind/react";
 import { useQuery } from "@tanstack/react-query";
 import { getQuestions } from "actions/quiz-actions";
 import { decrypt } from "utils/decryption";
+import { checkAnswer } from "utils/checkAnswer";
 
 const QuizContainer = () => {
   const quizConfig = useRecoilValue(quizConfigState);
   const router = useRouter();
+  const [myAnswer, setMyAnswer] = useState("");
+  const [isRight, setIsRight] = useState<boolean | null>(null);
+  const [myCount, setMyCount] = useState(0);
+  const [currentCount, setCurrentCount] = useState(0);
+  const [isEnd, setIsEnd] = useState(false);
+
+  const realAnswerRef = useRef("");
+  const inputRef = useRef<HTMLInputElement>(null);
+  const hiddenInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!quizConfig) {
       router.replace("/");
     }
   }, []);
+
+  useEffect(() => {
+    if (isRight === null && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isRight, currentCount]);
+
+  useEffect(() => {
+    if (isRight !== null && hiddenInputRef.current) {
+      hiddenInputRef.current.focus();
+    }
+  }, [isRight]);
 
   const getQuestionQuery = useQuery({
     queryKey: ["questions", quizConfig?.key],
@@ -26,36 +48,153 @@ const QuizContainer = () => {
     enabled: !!quizConfig,
   });
 
-  const onClickHandler = (idx: number) => {
+  if (!quizConfig || getQuestionQuery.isLoading || !getQuestionQuery.data) {
+    return (
+      <div className="p-6 w-full h-2/3 flex flex-col gap-8 rounded-lg bg-blue-600">
+        <div className="w-full h-full flex justify-center items-center">
+          <Spinner width={70} height={70} />
+        </div>
+      </div>
+    );
+  }
+
+  const currentQuiz = getQuestionQuery.data[currentCount];
+
+  const nextQuiz = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!quizConfig || !getQuestionQuery.data) return;
     if (
-      !quizConfig ||
-      !getQuestionQuery?.data ||
-      getQuestionQuery?.data[idx] === null
-    )
+      currentCount + 1 === quizConfig.count ||
+      getQuestionQuery.data.length < quizConfig.count
+    ) {
+      setIsEnd(true);
       return;
-    const answer = getQuestionQuery.data[idx].name;
-    const realAnswer = decrypt(answer, quizConfig.key.toString());
-    console.log(realAnswer);
+    }
+    setIsRight(null);
+    setMyAnswer("");
+    realAnswerRef.current = "";
+    setCurrentCount((prev) => prev + 1);
+  };
+
+  const quizHandler = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!quizConfig) return;
+
+    const check = checkAnswer(myAnswer, currentQuiz, quizConfig.key.toString());
+    const answer_code = decrypt(
+      currentQuiz.mode_code,
+      quizConfig.key.toString()
+    );
+    const answer_name = decrypt(currentQuiz.name, quizConfig.key.toString());
+    realAnswerRef.current = `${answer_code} ${answer_name}`;
+
+    if (check) {
+      setIsRight(true);
+      setMyCount((prev) => prev + 1);
+    } else {
+      setIsRight(false);
+    }
+  };
+
+  const restart = () => {
+    getQuestionQuery.refetch();
+    setIsRight(null);
+    setMyAnswer("");
+    realAnswerRef.current = "";
+    setCurrentCount(0);
+    setMyCount(0);
+    setIsEnd(false);
   };
 
   return (
     <div
       id="quiz-container"
-      className="p-6 w-full h-2/3 flex flex-col gap-8 rounded-lg bg-blue-600"
+      className="p-6 w-full h-fit flex flex-col gap-8 rounded-lg bg-blue-600"
     >
-      {(!quizConfig || getQuestionQuery.isLoading) && (
-        <div className="w-full h-full flex justify-center items-center">
-          <Spinner width={70} height={70} />
+      {isEnd && (
+        <div className="w-full h-[600px] rounded-md bg-white flex flex-col justify-center items-center gap-2">
+          <span className="text-3xl font-bold">{`${myCount}/${
+            getQuestionQuery.data.length === quizConfig.count
+              ? quizConfig.count
+              : getQuestionQuery.data.length
+          }`}</span>
+          <div className="flex gap-2">
+            <button
+              className="rounded-lg px-3 py-2 bg-yellow-500"
+              onClick={restart}
+            >
+              다시 풀기
+            </button>
+            <button
+              className="rounded-lg px-3 py-2 bg-red-500"
+              onClick={() => router.replace("/")}
+            >
+              처음으로
+            </button>
+          </div>
         </div>
       )}
-      {getQuestionQuery.data &&
-        getQuestionQuery.data.map((q, idx) => (
-          <div key={q.id}>
-            <p>{q.name}</p>
-            <p>{q.mode_code}</p>
-            <button onClick={() => onClickHandler(idx)}>정답</button>
+
+      {!isEnd && (
+        <>
+          <h2 className="text-3xl font-bold">{`${myCount}/${
+            getQuestionQuery.data.length === quizConfig.count
+              ? quizConfig.count
+              : getQuestionQuery.data.length
+          }`}</h2>
+
+          <div className="w-full h-[600px] rounded-md bg-white flex justify-center items-center py-12">
+            <img
+              className="h-full object-contain"
+              src={`${currentQuiz.image_url}`}
+              alt="quiz"
+            />
           </div>
-        ))}
+
+          {isRight === null && (
+            <form
+              className="w-full h-10 rounded-md py-6 flex items-center justify-center gap-7 flex-1"
+              onSubmit={quizHandler}
+            >
+              <input
+                value={myAnswer}
+                onChange={(e) => setMyAnswer(e.target.value)}
+                className="w-2/4 border-2 px-3 py-1"
+                ref={inputRef}
+              />
+              <button
+                type="submit"
+                className="rounded-lg px-3 py-2 bg-yellow-500"
+              >
+                정답
+              </button>
+            </form>
+          )}
+
+          {isRight !== null && (
+            <form
+              onSubmit={nextQuiz}
+              className="w-full h-10 rounded-md py-6 flex flex-col items-center justify-center gap-5 flex-1 bg-white"
+            >
+              <div className="text-red-500 text-lg font-bold">
+                {isRight ? "정답!" : "오답"}
+              </div>
+              <input className="sr-only" tabIndex={-1} ref={hiddenInputRef} />
+              <div className="text-xl font-bold">{realAnswerRef.current}</div>
+              <button
+                type="submit"
+                className="rounded-lg px-3 py-2 bg-yellow-500"
+              >
+                {currentCount + 1 === quizConfig.count ||
+                getQuestionQuery.data.length < quizConfig.count
+                  ? "종료"
+                  : "다음"}
+              </button>
+            </form>
+          )}
+        </>
+      )}
     </div>
   );
 };
