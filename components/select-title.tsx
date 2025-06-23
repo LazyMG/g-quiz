@@ -97,7 +97,7 @@ const SelectTitle = ({
       )}
       {getTitlesQuery.data && (
         <>
-          <div className="flex gap-6">
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3">
             {getTitlesQuery.data.length !== 0 ? (
               getTitlesQuery.data.map((title) => (
                 <label
@@ -119,7 +119,12 @@ const SelectTitle = ({
               peer-checked:ring-offset-2 peer-checked:ring-offset-white
               transition-all duration-150"
                   ></span>
-                  <span className="ml-2">{title.name}</span>
+                  <span className="ml-2">{`${title.name}${
+                    title?.mobile_suit_titles
+                      ? ` (${title?.mobile_suit_titles[0].count})`
+                      : ""
+                  }`}</span>
+                  <p></p>
                 </label>
               ))
             ) : (

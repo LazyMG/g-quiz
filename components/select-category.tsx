@@ -101,7 +101,7 @@ const SelectCategory = ({
         </div>
       ) : (
         <>
-          <div className="flex gap-6">
+          <div className="grid grid-cols-2 gap-2">
             <label className="relative flex items-center cursor-pointer ">
               <input
                 type="checkbox"

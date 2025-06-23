@@ -86,8 +86,8 @@ const QuizContainer = () => {
 
   const quizHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!quizConfig) return;
-    if (myAnswer === "") return;
+    if (!quizConfig || myAnswer === "" || imageLoading) return;
+
     const check = checkAnswer(myAnswer, currentQuiz, quizConfig.key.toString());
     const answer_code = decrypt(
       currentQuiz.mode_code,

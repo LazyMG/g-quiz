@@ -9,7 +9,7 @@ export async function getTitles(categoryList: TitleCategory[]) {
 
   const { data, error } = await supabase
     .from("titles")
-    .select("*")
+    .select("*,mobile_suit_titles(count)")
     .in("category", categoryList);
 
   if (error) {
