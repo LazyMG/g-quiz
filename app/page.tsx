@@ -1,5 +1,4 @@
-import { getTitles } from "actions/quiz-actions";
-import SelectContainer from "components/select-container";
+import SelectContainer from "components/select/select-container";
 import { redirect } from "next/navigation";
 
 interface HomePageProps {
