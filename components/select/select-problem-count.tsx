@@ -15,6 +15,7 @@ const SelectProblemCount = ({ setStep }: ISelectProblemCount) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const setQuizConfig = useSetRecoilState(quizConfigState);
+  const [isCreating, setIsCreating] = useState(false);
 
   const quizStart = () => {
     const categoryList = searchParams.getAll("category");
@@ -31,6 +32,7 @@ const SelectProblemCount = ({ setStep }: ISelectProblemCount) => {
       alert("유효한 문제 수를 입력해주세요.");
       return;
     }
+    setIsCreating(true);
 
     setQuizConfig({
       title: titleList,
@@ -63,8 +65,8 @@ const SelectProblemCount = ({ setStep }: ISelectProblemCount) => {
         <Button color="yellow" onClick={() => setStep("TITLE")}>
           이전
         </Button>
-        <Button color="red" onClick={quizStart}>
-          시작
+        <Button color="red" onClick={quizStart} disabled={isCreating}>
+          {isCreating ? "생성 중" : "시작"}
         </Button>
       </div>
     </div>
