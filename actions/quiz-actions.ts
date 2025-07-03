@@ -51,11 +51,12 @@ export async function getQuestions(
       name: encrypt(item.name, key.toString()),
       en_name: encrypt(item.en_name, key.toString()),
       mode_code: encrypt(item.mode_code, key.toString()),
-      aliases:
-        item.aliases?.map((alias) => ({
-          ...alias,
-          alias: encrypt(alias.alias, key.toString()),
-        })) ?? null,
+      aliases: Array.isArray(item.aliases)
+        ? (item.aliases as { id: number; alias: string }[]).map((alias) => ({
+            ...alias,
+            alias: encrypt(alias.alias, key.toString()),
+          }))
+        : null,
     }));
     return encrypted;
   }
