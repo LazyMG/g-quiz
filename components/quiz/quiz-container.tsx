@@ -153,14 +153,15 @@ const QuizContainer = () => {
 
           <div className="w-full h-[350px] sm:h-[600px] rounded-md bg-white flex justify-center items-center py-6 sm:py-12 relative">
             {imageLoading && (
-              <div className="absolute inset-0 bg-white z-10">
-                <div className=" animate-pulse rounded-md bg-gray-200" />
+              <div className="absolute inset-0 bg-white z-10 flex items-center justify-center">
+                <div className="w-full h-[350px] sm:h-[600px] animate-pulse bg-gray-300 rounded-md" />
               </div>
             )}
             <img
               className="h-full object-contain"
               src={`${currentQuiz.image_url}`}
               alt="quiz"
+              loading="lazy"
               onLoad={() => setImageLoading(false)}
             />
           </div>
