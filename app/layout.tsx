@@ -38,7 +38,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-100 w-full h-screen mx-auto xl:max-w-4xl lg:max-w-2xl md:max-w-xl max-w-sm`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-100 w-full max-h-dvh mx-auto xl:max-w-4xl lg:max-w-2xl md:max-w-xl max-w-sm`}
       >
         <ReactQueryClientProvider>
           <RecoilProvider>{children}</RecoilProvider>

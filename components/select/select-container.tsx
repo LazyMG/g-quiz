@@ -45,7 +45,7 @@ const SelectContainer = ({ data }: ISelectContainer) => {
   return (
     <div
       id="select-container"
-      className="p-6 w-full flex flex-col gap-8 rounded-lg bg-blue-600"
+      className="p-6 w-full flex flex-col gap-8 rounded-lg bg-blue-600 mb-10"
     >
       <div className="flex flex-col gap-8">
         <SelectCategory

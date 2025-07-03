@@ -117,7 +117,7 @@ const QuizContainer = () => {
   return (
     <div
       id="quiz-container"
-      className="p-6 w-full h-fit flex flex-col gap-8 rounded-lg bg-blue-600"
+      className="p-6 w-full h-fit flex flex-col sm:gap-8 rounded-lg bg-blue-600 gap-3 mb-10"
     >
       {isEnd && (
         <div className="w-full h-[600px] rounded-md bg-white flex flex-col justify-center items-center gap-2">
@@ -167,7 +167,7 @@ const QuizContainer = () => {
 
           {isRight === null && (
             <form
-              className="w-full h-10 rounded-md py-6 flex items-center justify-center gap-7 flex-1"
+              className="w-full h-10 rounded-md py-3 sm:py-6 flex items-center justify-center gap-7 flex-1"
               onSubmit={quizHandler}
             >
               <input
