@@ -39,8 +39,6 @@ const SelectTitle = ({
       return;
     }
 
-    console.log("titleList", titleList);
-
     setStep("COUNT");
 
     const currentParams = new URLSearchParams(window.location.search);
