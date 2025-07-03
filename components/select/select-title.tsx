@@ -38,6 +38,9 @@ const SelectTitle = ({
     if (titleList.length === 0) {
       return;
     }
+
+    console.log("titleList", titleList);
+
     setStep("COUNT");
 
     const currentParams = new URLSearchParams(window.location.search);
@@ -74,14 +77,34 @@ const SelectTitle = ({
   };
 
   useEffect(() => {
-    if (titleData) {
-      if (Array.isArray(titleData)) {
-        setTitleList([...titleData]);
-      } else {
-        setTitleList([titleData]);
-      }
+    if (!titleData || !getTitlesQuery.data) return;
+
+    const validTitleIds = getTitlesQuery.data.map((title) =>
+      title.id.toString()
+    );
+
+    // titleData가 배열이든 아니든 배열로 만듦
+    const titleArray = Array.isArray(titleData) ? titleData : [titleData];
+
+    // 유효한 ID만 필터링
+    const filteredTitles = titleArray.filter((id) =>
+      validTitleIds.includes(id)
+    );
+
+    setTitleList(filteredTitles); // 내부 상태로 설정
+
+    // searchParams에 잘못된 값이 있다면 URL에서 제거
+    if (filteredTitles.length !== titleArray.length) {
+      const params = new URLSearchParams(window.location.search);
+      params.delete("title");
+
+      filteredTitles.forEach((id) => {
+        params.append("title", id);
+      });
+
+      router.replace(`?${params.toString()}`);
     }
-  }, [titleData]);
+  }, [titleData, getTitlesQuery.data]);
 
   return (
     <div
@@ -99,7 +122,7 @@ const SelectTitle = ({
         <>
           <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3">
             {getTitlesQuery.data.length !== 0 ? (
-              getTitlesQuery.data.map((title) => (
+              getTitlesQuery.data.map((title, index) => (
                 <label
                   key={title.id}
                   className="relative flex items-center cursor-pointer "
