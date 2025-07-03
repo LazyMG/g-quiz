@@ -25,7 +25,7 @@ export default async function Home({ searchParams }: HomePageProps) {
   }
 
   return (
-    <main className="w-full flex flex-col gap-10 pb-10 sm:p-0 px-3">
+    <main className="w-full flex flex-col sm:gap-10 gap-4 sm:p-0 px-3">
       <header className="mt-12 w-full flex">
         <h1 className="w-full text-center font-bold text-6xl">Quiz</h1>
       </header>

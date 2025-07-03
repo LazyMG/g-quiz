@@ -117,10 +117,10 @@ const QuizContainer = () => {
   return (
     <div
       id="quiz-container"
-      className="p-6 w-full h-fit flex flex-col sm:gap-8 rounded-lg bg-blue-600 gap-3 mb-10"
+      className="sm:p-6 py-4 px-6 w-full h-fit flex flex-col sm:gap-8 rounded-lg bg-blue-600 gap-2 sm:mb-10"
     >
       {isEnd && (
-        <div className="w-full h-[600px] rounded-md bg-white flex flex-col justify-center items-center gap-2">
+        <div className="w-full h-[350px] sm:h-[600px] rounded-md bg-white flex flex-col justify-center items-center gap-2">
           <span className="text-3xl font-bold">{`${myCount}/${
             getQuestionQuery.data.length === quizConfig.count
               ? quizConfig.count
@@ -151,7 +151,7 @@ const QuizContainer = () => {
               : getQuestionQuery.data.length
           }`}</h2>
 
-          <div className="w-full h-[600px] rounded-md bg-white flex justify-center items-center py-12 relative">
+          <div className="w-full h-[350px] sm:h-[600px] rounded-md bg-white flex justify-center items-center py-6 sm:py-12 relative">
             {imageLoading && (
               <div className="absolute inset-0 bg-white z-10">
                 <div className=" animate-pulse rounded-md bg-gray-200" />
@@ -188,16 +188,18 @@ const QuizContainer = () => {
           {isRight !== null && (
             <form
               onSubmit={nextQuiz}
-              className="w-full h-10 rounded-md py-6 flex flex-col items-center justify-center gap-5 flex-1 bg-white"
+              className="w-full h-10 rounded-md py-2 sm:py-6 flex flex-col items-center justify-center gap-1 sm:gap-5 flex-1 bg-white"
             >
-              <div className="text-red-500 text-lg font-bold">
+              <div className="text-red-500 text-md sm:text-lg font-bold">
                 {isRight ? "정답!" : "오답"}
               </div>
               <input className="sr-only" tabIndex={-1} ref={hiddenInputRef} />
-              <div className="text-xl font-bold">{realAnswerRef.current}</div>
+              <div className="sm:text-xl font-bold text-md">
+                {realAnswerRef.current}
+              </div>
               <button
                 type="submit"
-                className="rounded-lg px-3 py-2 bg-yellow-500"
+                className="rounded-lg sm:px-3 sm:py-2 bg-yellow-500 px-2 py-1"
               >
                 {currentCount + 1 === quizConfig.count ||
                 getQuestionQuery.data.length <= currentCount + 1
