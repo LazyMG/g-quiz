@@ -58,7 +58,7 @@ export async function getQuestions(
           }))
         : null,
     }));
-    console.log("questions", encrypted);
+
     return encrypted;
   }
 
