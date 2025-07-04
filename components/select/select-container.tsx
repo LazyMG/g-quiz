@@ -20,28 +20,6 @@ const SelectContainer = ({ data }: ISelectContainer) => {
   const [category, setCategory] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    const formData = new FormData(event.currentTarget);
-
-    const titles = formData.getAll("title"); // checkbox input
-    const count = formData.get("count");
-
-    if (
-      !titles.length ||
-      typeof count !== "string" ||
-      isNaN(Number(count)) ||
-      Number(count) <= 0
-    ) {
-      alert("입력값을 확인해주세요");
-      return;
-    }
-
-    // ✅ 이때만 제출 허용
-    event.currentTarget.submit(); // action="/quiz"로 POST 전송
-  };
-
   return (
     <div
       id="select-container"
@@ -52,7 +30,7 @@ const SelectContainer = ({ data }: ISelectContainer) => {
           setStep={setStep}
           step={step}
           categoryData={data?.category}
-          categoryList={category}
+          categoryList={Array.from(new Set(category))}
           setCategoryList={setCategory}
           isLoading={isLoading}
           setIsLoading={setIsLoading}
@@ -61,7 +39,7 @@ const SelectContainer = ({ data }: ISelectContainer) => {
           <SelectTitle
             setStep={setStep}
             step={step}
-            categoryList={category}
+            categoryList={Array.from(new Set(category))}
             isLoading={isLoading}
             titleData={data?.title}
           />

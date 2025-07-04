@@ -91,12 +91,14 @@ const SelectTitle = ({
 
     setTitleList(filteredTitles); // 내부 상태로 설정
 
+    const uniqueFilteredTitles = Array.from(new Set(filteredTitles));
+
     // searchParams에 잘못된 값이 있다면 URL에서 제거
-    if (filteredTitles.length !== titleArray.length) {
+    if (uniqueFilteredTitles.length !== titleArray.length) {
       const params = new URLSearchParams(window.location.search);
       params.delete("title");
 
-      filteredTitles.forEach((id) => {
+      uniqueFilteredTitles.forEach((id) => {
         params.append("title", id);
       });
 
