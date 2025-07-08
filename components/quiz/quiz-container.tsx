@@ -47,6 +47,7 @@ const QuizContainer = () => {
     queryFn: () =>
       getQuestions(quizConfig!.title, quizConfig!.count, quizConfig!.key),
     enabled: !!quizConfig,
+    refetchOnWindowFocus: false,
   });
 
   if (
@@ -121,11 +122,13 @@ const QuizContainer = () => {
     >
       {isEnd && (
         <div className="w-full h-[350px] sm:h-[600px] rounded-md bg-white flex flex-col justify-center items-center gap-2">
-          <span className="text-3xl font-bold">{`${myCount}/${
-            getQuestionQuery.data.length === quizConfig.count
-              ? quizConfig.count
-              : getQuestionQuery.data.length
-          }`}</span>
+          <span className="text-3xl font-bold">
+            {`${myCount}/${
+              getQuestionQuery.data.length === quizConfig.count
+                ? quizConfig.count
+                : getQuestionQuery.data.length
+            }`}
+          </span>
           <div className="flex gap-2">
             <button
               className="rounded-lg px-3 py-2 bg-yellow-500"
@@ -145,11 +148,16 @@ const QuizContainer = () => {
 
       {!isEnd && (
         <>
-          <h2 className="text-3xl font-bold">{`${myCount}/${
-            getQuestionQuery.data.length === quizConfig.count
-              ? quizConfig.count
-              : getQuestionQuery.data.length
-          }`}</h2>
+          <div className="w-full flex justify-between">
+            <h2 className="text-lg sm:text-3xl font-bold">{`${
+              currentCount + 1
+            }번`}</h2>
+            <h2 className="text-lg sm:text-3xl font-bold">{`맞힌 문제: ${myCount}/${
+              getQuestionQuery.data.length === quizConfig.count
+                ? quizConfig.count
+                : getQuestionQuery.data.length
+            }`}</h2>
+          </div>
 
           <div className="w-full h-[350px] sm:h-[600px] rounded-md bg-white flex justify-center items-center py-6 sm:py-12 relative">
             {imageLoading && (
