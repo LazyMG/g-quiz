@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getQuestions } from "actions/quiz-actions";
 import { decrypt } from "utils/decryption";
 import { checkAnswer } from "utils/checkAnswer";
+import Image from "next/image";
 
 const QuizContainer = () => {
   const quizConfig = useRecoilValue(quizConfigState);
@@ -165,12 +166,14 @@ const QuizContainer = () => {
                 <div className="w-full h-[350px] sm:h-[600px] animate-pulse bg-gray-300 rounded-md" />
               </div>
             )}
-            <img
+            <Image
               className="h-full object-contain"
               src={`${currentQuiz.image_url}`}
               alt="quiz"
               loading="lazy"
               onLoad={() => setImageLoading(false)}
+              width={350}
+              height={350}
             />
           </div>
 
